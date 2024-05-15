@@ -5,6 +5,7 @@ import {
   Route,
 } from 'react-router-dom';
 import {
+  Provider,
   useDispatch,
   useSelector,
 } from 'react-redux';
@@ -17,20 +18,27 @@ import LoginPage from 'pageProviders/Login';
 import PageContainer from 'pageProviders/components/PageContainer';
 import pageURLs from 'constants/pagesURLs';
 import SecretPage from 'pageProviders/Secret';
+import ListPage from "pageProviders/List";
 import ThemeProvider from 'misc/providers/ThemeProvider';
 import UserProvider from 'misc/providers/UserProvider';
 
 import actionsUser from '../actions/user';
+import actionSongs from '../actions/song';
 import Header from '../components/Header';
 import IntlProvider from '../components/IntlProvider';
 import MissedPage from '../components/MissedPage';
 import SearchParamsConfigurator from '../components/SearchParamsConfigurator';
+import configureStore from "../../misc/redux/configureStore";
+import SongReducer from "../reducers/song";
+import EditPage from "../../pageProviders/Edit";
 
 function App() {
   const dispatch = useDispatch();
   const [state, setState] = useState({
     componentDidMount: false,
   });
+
+  const messageStore = configureStore(SongReducer)
 
   const {
     errors,
@@ -46,6 +54,7 @@ function App() {
       onSignOut: () => dispatch(actionsUser.fetchSignOut()),
     });
     dispatch(actionsUser.fetchUser());
+    dispatch(actionSongs.fetchSongs());
     setState({
       ...state,
       componentDidMount: true,
@@ -78,6 +87,14 @@ function App() {
                     <Route
                       element={<SecretPage />}
                       path={`${pageURLs[pages.secretPage]}`}
+                    />
+                    <Route
+                        element={ <ListPage /> }
+                        path={`${pageURLs[pages.list]}`}
+                    />
+                    <Route
+                        element={ <EditPage /> }
+                        path={`${pageURLs[pages.edit]}`}
                     />
                     <Route
                       element={(
